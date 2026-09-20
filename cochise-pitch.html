@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cochise Oncology — Marketing Budget Options</title>
+<style>
+  :root{
+    --bg:#f6f5f2; --card:#ffffff; --ink:#1d2229; --muted:#5f6772; --line:#e3e1db;
+    --accent:#0f6e73; --accent-soft:#d9eeef; --broad:#c46a1f; --broad-soft:#f7e6d6;
+    --today:#8a8f98; --good:#2f7d4f; --warn:#b3261e;
+    --sans:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--sans)}
+  .wrap{max-width:980px;margin:0 auto;padding:32px 16px 64px}
+  header{margin-bottom:24px}
+  .eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  h1{font-size:30px;line-height:1.15;margin:6px 0 8px}
+  .lede{color:var(--muted);max-width:640px;margin:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:18px 0}
+  .card h2{font-size:20px;margin:0 0 4px}
+  .card .sub{color:var(--muted);margin:0 0 16px;font-size:15px}
+  .num{font-variant-numeric:tabular-nums}
+  small,.fine{font-size:13px;color:var(--muted)}
+
+  /* stacked bar chart (today vs proposed) */
+  .bars{display:grid;gap:12px;margin:14px 0 4px}
+  .brow{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center}
+  .brow .name b{display:block;font-size:14px}
+  .brow .name span{font-size:13px;color:var(--muted)}
+  .track{position:relative;height:38px;background:#f0efeb;border-radius:8px;overflow:hidden}
+  .seg{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;white-space:nowrap}
+  .seg.agency{background:var(--today)}
+  .seg.oversight{background:repeating-linear-gradient(135deg,#b6bac1 0 6px,#cfd2d7 6px 12px);color:#333}
+  .seg.ads{background:var(--accent)}
+  .seg.time{background:#5aa3a7}
+  .axis{position:relative;height:18px;margin-left:162px;font-size:12px;color:var(--muted)}
+  .axis span{position:absolute;transform:translateX(-50%)}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin-top:8px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+  /* tier tabs */
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .tab{border:1px solid var(--line);background:#fafaf8;border-radius:10px;padding:10px 14px;cursor:pointer;font:inherit;text-align:left;min-width:150px;flex:1}
+  .tab b{display:block;font-size:18px}
+  .tab span{font-size:13px;color:var(--muted)}
+  .tab[aria-selected="true"]{border-color:var(--accent);background:var(--accent-soft)}
+  .tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* funnel tiles */
+  .funnel{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:8px 0 14px}
+  .tile{background:#fafaf8;border:1px solid var(--line);border-radius:10px;padding:12px 10px;text-align:center;position:relative}
+  .tile .lab{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .tile .val{font-size:24px;font-weight:700;margin:2px 0}
+  .tile .rng{font-size:12px;color:var(--muted)}
+  .tile.rev{background:var(--accent-soft);border-color:var(--accent)}
+  .tile:not(:last-child)::after{content:"›";position:absolute;right:-9px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px;z-index:1}
+
+  /* comparison bars across tiers */
+  .cmp{display:grid;gap:8px;margin-top:8px}
+  .crow{display:grid;grid-template-columns:130px 1fr 110px;gap:10px;align-items:center;font-size:14px}
+  .crow .bar{height:22px;position:relative;background:#f0efeb;border-radius:6px;overflow:hidden}
+  .crow .spend{position:absolute;left:0;top:0;bottom:0;background:var(--today)}
+  .crow .ret{position:absolute;left:0;top:0;bottom:0;background:var(--accent);opacity:.85;height:50%;top:50%}
+  .crow .r{text-align:right;color:var(--muted)}
+  .crow.active{font-weight:600}
+  .note{background:#fbf8ef;border-left:3px solid #d9b85a;padding:10px 14px;border-radius:6px;margin:14px 0 0;font-size:15px}
+  .why{background:var(--accent-soft);border-left:3px solid var(--accent);padding:10px 14px;border-radius:6px;margin:14px 0 0;font-size:15px}
+
+  /* slider */
+  .slider{margin:10px 0 6px}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .ticks{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:2px}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  .half{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .half h3{margin:0 0 4px;font-size:15px}
+  .half.local h3{color:var(--accent)} .half.broad h3{color:var(--broad)}
+  .half .big{font-size:22px;font-weight:700}
+  .half ul{margin:6px 0 0;padding-left:18px;font-size:14px;color:var(--muted)}
+  .mixbar{height:14px;border-radius:7px;overflow:hidden;display:flex;margin:8px 0}
+  .mixbar i{display:block;height:100%}
+  .mixbar .l{background:var(--accent)} .mixbar .b{background:var(--broad)}
+
+  /* targets */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid2 h3{font-size:15px;margin:0 0 6px}
+  .grid2 ul{margin:0;padding-left:18px;font-size:14px}
+  .grid2 li{margin:4px 0}
+  .pill{display:inline-block;background:#eef0f3;border-radius:999px;padding:2px 10px;font-size:13px;margin:3px 4px 3px 0}
+  dl{display:grid;grid-template-columns:170px 1fr;gap:6px 14px;margin:0;font-size:14px}
+  dt{font-weight:600} dd{margin:0;color:var(--muted)}
+  table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}
+  td,th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  td.r,th.r{text-align:right}
+  @media (max-width:700px){
+    .funnel{grid-template-columns:repeat(2,1fr)} .tile:not(:last-child)::after{display:none}
+    .brow{grid-template-columns:1fr} .axis{margin-left:0} .split,.grid2{grid-template-columns:1fr}
+    .crow{grid-template-columns:100px 1fr 90px} dl{grid-template-columns:1fr}
+  }
+  @media print{body{background:#fff} .card{break-inside:avoid;border-color:#ccc} .tab{display:none} .tab[aria-selected="true"]{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Cochise Oncology · Board discussion · September 2026</div>
+    <h1>How much should we spend on search ads, and what do we get back?</h1>
+    <p class="lede">Four budget options, one recommendation. Every number below is computed from a short list of assumptions we can change on Tuesday, and the page updates itself.</p>
+  </header>
+
+  <!-- 1. Today vs proposed -->
+  <section class="card">
+    <h2>Same money, different use</h2>
+    <p class="sub">We are not asking for a bigger budget. We are moving what we already spend into something we can measure.</p>
+    <div class="bars" id="costChart"></div>
+    <div class="axis" id="costAxis"></div>
+    <div class="legend">
+      <span><i style="background:var(--today)"></i>Agency retainer</span>
+      <span><i style="background:repeating-linear-gradient(135deg,#b6bac1 0 3px,#cfd2d7 3px 6px)"></i>Leadership oversight hours (est.)</span>
+      <span><i style="background:var(--accent)"></i>Google Search ads</span>
+      <span><i style="background:#5aa3a7"></i>In-house time + tools (est.)</span>
+    </div>
+  </section>
+
+  <!-- 2. Budget options -->
+  <section class="card">
+    <h2>Pick a budget, see the return</h2>
+    <p class="sub">Click an option. Numbers are monthly planning estimates, shown as a middle figure with a low–high range underneath. "Return" means revenue from new patients, using our rough per-patient values.</p>
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <div class="funnel" id="funnel"></div>
+    <p class="fine" id="tierNote"></p>
+    <div class="cmp" id="cmp"></div>
+    <div class="fine" style="margin-top:6px">Grey = monthly ad spend. Teal = estimated monthly return (middle estimate). Bars share one scale.</div>
+    <div class="why" id="whyTier"></div>
+  </section>
+
+  <!-- 3. Local vs broad -->
+  <section class="card">
+    <h2>Where the ads run: local vs. broad</h2>
+    <p class="sub">Local means Cochise County and the driving radius patients already come from. Broad means the whole country, but only people searching for low-dose radiation therapy by name. Slide to see what each split does with the selected budget.</p>
+    <div class="slider">
+      <input type="range" id="split" min="0" step="1" aria-label="Percent of budget spent locally">
+      <div class="ticks" id="ticks"></div>
+    </div>
+    <div class="mixbar" id="mixbar"></div>
+    <div class="split">
+      <div class="half local" id="localBox"></div>
+      <div class="half broad" id="broadBox"></div>
+    </div>
+    <table id="splitTable"></table>
+    <div class="why" id="whySplit"></div>
+  </section>
+
+  <!-- 4. Targets -->
+  <section class="card">
+    <h2>Who we are aiming at</h2>
+    <p class="sub">Ranked by what a patient is worth to the practice and how easy they are to reach.</p>
+    <div class="grid2" id="targets"></div>
+    <table id="valueTable"></table>
+    <p class="fine" id="excluded"></p>
+  </section>
+
+  <!-- 5. How we'll run it + glossary -->
+  <section class="card">
+    <h2>How we'll run it</h2>
+    <dl>
+      <dt>Start small</dt><dd id="ramp"></dd>
+      <dt>Search ads only</dt><dd>Ads appear only when someone types a relevant search. No banners, no social media.</dd>
+      <dt>One campaign per condition</dt><dd>Osteoarthritis, breast, prostate, hematology each measured on their own, so we can stop what doesn't work.</dd>
+      <dt>Phone first</dt><dd>Most oncology inquiries are calls. Call tracking is live before the first dollar is spent, and the front desk asks "how did you hear about us?"</dd>
+      <dt>90-day check</dt><dd>Board sees cost per inquiry and cost per new patient by service line. Continue, adjust, or stop.</dd>
+    </dl>
+    <h2 style="margin-top:22px;font-size:17px">Plain-English terms</h2>
+    <dl>
+      <dt>Click</dt><dd>One person tapping our ad after searching. We pay per click, not per view.</dd>
+      <dt>Cost per click</dt><dd>What Google charges for one click. Local specialty-medicine terms run roughly $15–30.</dd>
+      <dt>Inquiry</dt><dd>A phone call or form from a real person asking about treatment.</dd>
+      <dt>New patient</dt><dd>An inquiry that becomes a scheduled, treated patient.</dd>
+      <dt>Return</dt><dd>Estimated revenue from those new patients, using the per-patient values above.</dd>
+      <dt>Break-even</dt><dd>How many new patients a month pay for the ad spend on their own.</dd>
+      <dt>SEO</dt><dd>Making our website show up in free search results. Slow but lasting; the ads are the fast lane while SEO builds.</dd>
+      <dt>LDRT</dt><dd>Low-dose radiation therapy, our osteoarthritis treatment. Rare enough that people travel for it.</dd>
+    </dl>
+  </section>
+
+  <p class="fine"><span id="status"></span> Per-patient values are rough; refine after Tuesday's data.</p>
+</div>
+
+<!-- Built-in defaults: the page always works on its own. cochise-numbers.js, if present beside this file, overrides them. -->
+<script>
+// ============================================================
+//  COCHISE ONCOLOGY — EDITABLE NUMBERS
+//  Open in Notepad, change a number, save, refresh cochise-pitch.html.
+//  Every figure the pitch page shows is computed from this file.
+//  Dollar amounts are per month unless noted. Rates are decimals (0.06 = 6%).
+// ============================================================
+
+window.COCHISE_DEFAULTS = {
+
+  // ---- What the practice spends today vs. what we propose ----
+  today:    { agency: 2600, oversight: 400 },       // NP Digital retainer + leadership's own oversight hours (est.) = ~$3,000
+  proposed: { ads: 2000, timeAndSoftware: 800 },    // ad spend + Will's time & tools (rough) = ~$2,800
+
+  // ---- What one new patient is worth, by service line (rough, refine Tuesday) ----
+  patientValue: {
+    "Osteoarthritis (low-dose radiation)": 4000,
+    "Xoft skin treatment":                 1000,
+    "Metastatic":                          4000,
+    "Breast cancer":                       6000,
+    "Prostate cancer":                     8000,
+    "SBRT (targeted radiation)":           6000
+  },
+  excluded: "Chemotherapy — loses money per patient, so we do not advertise for it.",
+
+  // ---- Expected mix of ad-driven new patients (shares should add to 1.0) ----
+  // Used to compute the blended value of one new patient.
+  mix: {
+    "Osteoarthritis (low-dose radiation)": 0.30,
+    "Xoft skin treatment":                 0.10,
+    "Metastatic":                          0.10,
+    "Breast cancer":                       0.25,
+    "Prostate cancer":                     0.15,
+    "SBRT (targeted radiation)":           0.10
+  },
+
+  // ---- How ads turn into patients: [low, high] planning ranges ----
+  // clicks = budget / cost per click;  inquiries = clicks x inquiryRate;  patients = inquiries x closeRate
+  local: { cpc: [15, 30], inquiryRate: [0.05, 0.08], closeRate: [0.30, 0.40] },   // Cochise County + ~70-mile radius
+  broad: { cpc: [20, 40], inquiryRate: [0.03, 0.06], closeRate: [0.10, 0.20] },   // national, high-intent LDRT searches
+
+  // ---- Budget options shown to the board ----
+  // efficiency < 1 means cheap local clicks run out and each extra dollar buys a little less.
+  tiers: [
+    { label: "Lower",       budget: 1000, efficiency: 1.00, note: "Proves tracking works. Too small to learn much quickly." },
+    { label: "Proposed",    budget: 2000, efficiency: 1.00, note: "Same total spend as today. Enough clicks to learn what converts in 90 days.", isDefault: true },
+    { label: "Higher",      budget: 3500, efficiency: 0.90, note: "Faster learning, but local search volume starts to cap out." },
+    { label: "Typical practice", budget: 5000, efficiency: 0.80, note: "What a comparable specialty practice often spends. Wasteful here until tracking proves the first tier." }
+  ],
+
+  // ---- Local vs. broad split (percent local). Slider snaps to these. ----
+  splits: [100, 80, 60, 40, 20],
+  proposedSplit: 80,
+
+  // ---- Ramp: month-one spend before scaling to the full budget ----
+  rampMonthOne: 500,
+
+  // ---- Key targets (edit freely) ----
+  targets: {
+    serviceLines: [
+      "Low-dose radiation for osteoarthritis — ~1,410 searches/month nationally, low competition, our clearest differentiator",
+      "Breast cancer — 'breast cancer center near me' (720/mo); October is Breast Cancer Awareness Month",
+      "Prostate cancer & SBRT — highest value per patient",
+      "Hematology — 'hematologist sierra vista' already ranks #3; cheap to defend"
+    ],
+    geography: [
+      "Sierra Vista and Cochise County (core)",
+      "Tucson and a ~70-mile driving radius (patients already come from here)",
+      "Fort Huachuca — military, veteran and TRICARE families (confirm TRICARE is accepted)",
+      "National — only for people searching low-dose radiation therapy by name"
+    ],
+    referralPartners: [
+      "Copper Queen Community Hospital (CEO contact confirmed)",
+      "Canyon Vista Medical Center",
+      "Benson Hospital / Northern Cochise Community Hospital",
+      "Chiricahua Community Health Centers"
+    ],
+    searchTerms: [
+      "low dose radiation for osteoarthritis",
+      "radiation for osteoarthritis of the knee",
+      "breast cancer center near me",
+      "breast cancer specialists arizona",
+      "prostate cancer treatment sierra vista",
+      "hematologist sierra vista",
+      "cancer center near me"
+    ]
+  }
+};
+
+</script>
+<script src="cochise-numbers.js"></script>
+<script>
+(function(){
+  const usingFile = !!window.COCHISE;
+  const C = window.COCHISE || window.COCHISE_DEFAULTS;
+  document.getElementById("status").textContent = usingFile
+    ? "Numbers loaded from cochise-numbers.js (edit that file, save, refresh)."
+    : "Using the built-in numbers. To make edits, keep cochise-numbers.js in the same folder as this page.";
+  const $ = id => document.getElementById(id);
+  const usd = n => '$' + Math.round(n).toLocaleString();
+  const usdK = n => n >= 1000 ? '$' + (n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,'') + 'k' : usd(n);
+  const one = n => n < 10 ? (Math.round(n*10)/10).toFixed(1).replace(/\.0$/,'') : Math.round(n).toString();
+  const mid = r => (r[0]+r[1])/2;
+
+  // blended value of one new patient
+  const blended = Object.keys(C.mix).reduce((s,k)=> s + (C.patientValue[k]||0)*C.mix[k], 0);
+
+  // ---- 1. cost chart ----
+  (function(){
+    const t = C.today, p = C.proposed;
+    const tTot = t.agency + t.oversight, pTot = p.ads + p.timeAndSoftware;
+    const max = Math.ceil(Math.max(tTot,pTot)/1000)*1000;
+    const w = v => (v/max*100).toFixed(2)+'%';
+    $('costChart').innerHTML = `
+      <div class="brow"><div class="name"><b>Today</b><span>Agency retainer + oversight</span></div>
+        <div class="track">
+          <div class="seg agency" style="left:0;width:${w(t.agency)}" title="Agency retainer">${usd(t.agency)}</div>
+          <div class="seg oversight" style="left:${w(t.agency)};width:${w(t.oversight)}" title="Oversight hours (est.)">~${usd(t.oversight)}</div>
+        </div></div>
+      <div class="brow"><div class="name"><b>Proposed</b><span>In-house, run by Will</span></div>
+        <div class="track">
+          <div class="seg ads" style="left:0;width:${w(p.ads)}" title="Google Search ads">${usd(p.ads)}</div>
+          <div class="seg time" style="left:${w(p.ads)};width:${w(p.timeAndSoftware)}" title="Time + tools (est.)">~${usd(p.timeAndSoftware)}</div>
+        </div></div>`;
+    let ax=''; for(let v=0; v<=max; v+=1000) ax += `<span style="left:${w(v)}">${usd(v)}</span>`;
+    $('costAxis').innerHTML = ax;
+    document.querySelector('.card .sub').textContent =
+      `We are not asking for a bigger budget. Today's true cost is about ${usd(tTot)} a month; the proposal is about ${usd(pTot)}, with ${usd(p.ads)} of it going to ads we can track click by click.`;
+  })();
+
+  // ---- model ----
+  function run(budget, pctLocal, eff){
+    const parts = {};
+    ['local','broad'].forEach(k=>{
+      const share = k==='local' ? pctLocal/100 : 1-pctLocal/100;
+      const b = budget*share, a = C[k];
+      const calc = (cpc, ir, cr) => { const clicks=b/cpc*eff, inq=clicks*ir, pts=inq*cr; return {clicks,inq,pts,rev:pts*blended}; };
+      parts[k] = { budget:b,
+        lo: calc(a.cpc[1], a.inquiryRate[0], a.closeRate[0]),
+        mid: calc(mid(a.cpc), mid(a.inquiryRate), mid(a.closeRate)),
+        hi: calc(a.cpc[0], a.inquiryRate[1], a.closeRate[1]) };
+    });
+    const sum = key => ['lo','mid','hi'].reduce((o,s)=>{ o[s]={}; ['clicks','inq','pts','rev'].forEach(f=> o[s][f]=parts.local[s][f]+parts.broad[s][f]); return o; },{});
+    return { budget, parts, total: sum() };
+  }
+
+  let tierIdx = Math.max(0, C.tiers.findIndex(t=>t.isDefault));
+  let split = C.proposedSplit;
+
+  // ---- 2. tiers ----
+  function renderTabs(){
+    $('tabs').innerHTML = C.tiers.map((t,i)=>`<button class="tab" role="tab" aria-selected="${i===tierIdx}" data-i="${i}"><b>${usd(t.budget)}<small style="font-weight:400">/mo</small></b><span>${t.label}</span></button>`).join('');
+    $('tabs').querySelectorAll('.tab').forEach(b=> b.onclick = ()=>{ tierIdx=+b.dataset.i; renderAll(); });
+  }
+  function renderTier(){
+    const t = C.tiers[tierIdx], r = run(t.budget, split, t.efficiency), T = r.total;
+    const tile = (lab,v,lo,hi,cls='') => `<div class="tile ${cls}"><div class="lab">${lab}</div><div class="val num">${v}</div><div class="rng num">${hi===undefined?lo:lo+' – '+hi}</div></div>`;
+    $('funnel').innerHTML =
+      tile('Ad spend', usd(t.budget), 'per month') +
+      tile('Clicks', one(T.mid.clicks), one(T.lo.clicks), one(T.hi.clicks)) +
+      tile('Inquiries', one(T.mid.inq), one(T.lo.inq), one(T.hi.inq)) +
+      tile('New patients', one(T.mid.pts), one(T.lo.pts), one(T.hi.pts)) +
+      tile('Return', usdK(T.mid.rev), usdK(T.lo.rev), usdK(T.hi.rev), 'rev');
+    const be = t.budget/blended;
+    $('tierNote').innerHTML = `<b>${t.label}:</b> ${t.note} Break-even is <b>${one(be)}</b> new patient${be>=1.05?'s':''} a month (one new patient is worth about ${usd(blended)} blended). Middle estimate returns about <b>${(T.mid.rev/t.budget).toFixed(1)}×</b> the spend.`;
+    // comparison
+    const rows = C.tiers.map((x,i)=>({x,i,r:run(x.budget, split, x.efficiency)}));
+    const max = Math.max(...rows.map(o=>Math.max(o.x.budget,o.r.total.mid.rev)));
+    $('cmp').innerHTML = rows.map(o=>`<div class="crow ${o.i===tierIdx?'active':''}"><div>${o.x.label}</div>
+      <div class="bar"><div class="spend" style="width:${o.x.budget/max*100}%"></div><div class="ret" style="width:${o.r.total.mid.rev/max*100}%"></div></div>
+      <div class="r num">${usd(o.x.budget)} → ${usdK(o.r.total.mid.rev)}</div></div>`).join('');
+    const def = C.tiers.find(x=>x.isDefault) || C.tiers[1];
+    $('whyTier').innerHTML = `<b>Why we propose ${usd(def.budget)}:</b> it costs the practice nothing extra, it is large enough to produce a readable result in 90 days, and each dollar still buys a full-price click. Above that, cheap local searches run out and we would be paying more per patient before we know what works.`;
+  }
+
+  // ---- 3. split slider ----
+  function renderSliderShell(){
+    const s = $('split'); s.max = C.splits.length-1; s.value = C.splits.indexOf(split);
+    $('ticks').innerHTML = C.splits.map(p=>`<span>${p}% local</span>`).join('');
+    s.oninput = ()=>{ split = C.splits[+s.value]; renderAll(); };
+  }
+  function renderSplit(){
+    const t = C.tiers[tierIdx], r = run(t.budget, split, t.efficiency);
+    $('split').value = C.splits.indexOf(split);
+    $('mixbar').innerHTML = `<i class="l" style="width:${split}%"></i><i class="b" style="width:${100-split}%"></i>`;
+    const box = (k,title,bullets) => { const p=r.parts[k]; return `<h3>${title} · ${usd(p.budget)}/mo</h3>
+      <div class="big num">${one(p.mid.pts)} <small style="font-weight:400">new patients/mo</small></div>
+      <div class="fine num">${one(p.mid.clicks)} clicks → ${one(p.mid.inq)} inquiries → ${usdK(p.mid.rev)} return</div><ul>${bullets.map(b=>`<li>${b}</li>`).join('')}</ul>`; };
+    $('localBox').innerHTML = box('local', `Local (${split}%)`, ['Cheaper clicks, and callers can actually come in','Every condition we treat','Best cost per new patient']);
+    $('broadBox').innerHTML = box('broad', `Broad (${100-split}%)`, ['Only low-dose radiation searches, nationwide','Few convert — most people won\'t travel','Worth a small test: one patient already came from Pennsylvania']);
+    const rows = C.splits.map(p=>({p,r:run(t.budget,p,t.efficiency)}));
+    $('splitTable').innerHTML = `<tr><th>Split</th><th class="r">Inquiries</th><th class="r">New patients</th><th class="r">Return</th><th class="r">Cost per patient</th></tr>` +
+      rows.map(o=>`<tr style="${o.p===split?'font-weight:600;background:var(--accent-soft)':''}"><td>${o.p}% local / ${100-o.p}% broad</td><td class="r num">${one(o.r.total.mid.inq)}</td><td class="r num">${one(o.r.total.mid.pts)}</td><td class="r num">${usdK(o.r.total.mid.rev)}</td><td class="r num">${usd(t.budget/o.r.total.mid.pts)}</td></tr>`).join('');
+    const best = rows.reduce((a,b)=> b.r.total.mid.pts>a.r.total.mid.pts?b:a);
+    $('whySplit').innerHTML = `<b>Why we propose ${C.proposedSplit}% local / ${100-C.proposedSplit}% broad:</b> ${best.p===100 ? 'all-local gives the most patients on paper, but it tells us nothing about the national LDRT demand we already know exists.' : 'it is close to the best on paper'} Keeping ${100-C.proposedSplit}% broad is a cheap, separately measured test of whether out-of-area patients will travel for low-dose radiation. If it doesn't convert in 90 days, it goes back to local.`;
+  }
+
+  // ---- 4. targets ----
+  (function(){
+    const T = C.targets, li = a => a.map(x=>`<li>${x}</li>`).join('');
+    $('targets').innerHTML = `
+      <div><h3>Service lines</h3><ul>${li(T.serviceLines)}</ul></div>
+      <div><h3>Geography</h3><ul>${li(T.geography)}</ul></div>
+      <div><h3>Referral partners to build</h3><ul>${li(T.referralPartners)}</ul></div>
+      <div><h3>Search terms we'll bid on</h3>${T.searchTerms.map(s=>`<span class="pill">${s}</span>`).join('')}</div>`;
+    const keys = Object.keys(C.patientValue).sort((a,b)=>C.patientValue[b]-C.patientValue[a]);
+    $('valueTable').innerHTML = `<tr><th>Service line</th><th class="r">Value per new patient</th><th class="r">Expected share of ad patients</th></tr>` +
+      keys.map(k=>`<tr><td>${k}</td><td class="r num">${usd(C.patientValue[k])}</td><td class="r num">${Math.round((C.mix[k]||0)*100)}%</td></tr>`).join('') +
+      `<tr style="font-weight:600"><td>Blended value of one new patient</td><td class="r num">${usd(blended)}</td><td class="r">100%</td></tr>`;
+    $('excluded').textContent = 'Not advertised: ' + C.excluded;
+    $('ramp').textContent = `Month one runs at about ${usd(C.rampMonthOne)} to confirm tracking works, then scales to the approved budget.`;
+  })();
+
+  function renderAll(){ renderTabs(); renderTier(); renderSplit(); }
+  renderSliderShell(); renderAll();
+})();
+</script>
+</body>
+</html>
